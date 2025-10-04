@@ -83,7 +83,7 @@ Here are the available endpoints for this API.
 {
   "title": "Finish the README file",
   "description": "Complete all sections of the project's README.",
-  "completed": false
+  "completed": pendding/completed
 }
 ```
 
