@@ -1,0 +1,71 @@
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: todo_db
+    environment:
+      MYSQL_ROOT_PASSWORD: 123653a@app
+      MYSQL_DATABASE: todo_db
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todo_pass
+      T/Z: Asia/Kolkata
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
+    ports:
+      - "3307:3306"
+    volumes:
+    - todoapi_data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: todo_redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+  celery:
+    build: .
+    container_name: todo_celery
+    restart: always
+    command: celery -A tasks worker --loglevel=info
+    depends_on:
+      - db
+      - redis
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0     
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile  
+    container_name: todo_web
+    restart: always
+    ports:
+      - 8080:8000
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      celery:
+        condition: service_started  
+    command: >
+            sh -c "
+            python manage.py makemigrations &&
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000
+            "
+    environment:
+      DB_NAME: todo_db
+      DB_USER: todo_user
+      DB_PASSWORD: todo_pass
+      DB_HOST: db
+      DB_PORT: 3306
+volumes:
+  todoapi_data:

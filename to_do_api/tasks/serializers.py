@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Task
 from django.contrib.auth.models import User
-from tasks.task import send_email
+from tasks.tasks import send_email
 
 class TaskSerializer(serializers.ModelSerializer):
     user_details = serializers.ReadOnlyField(source='user.username')

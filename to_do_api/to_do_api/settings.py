@@ -84,11 +84,11 @@ DATABASES = {
     # }
     'default': {
                 'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'todoapi',
-                'USER': 'root',
-                'PASSWORD': 'root',
-                'HOST': 'localhost',  # Or the IP address of your MySQL server
-                'PORT': '3306',       # Default MySQL port
+                'NAME': os.getenv('DB_NAME', 'todo_db'),
+                'USER': os.getenv('DB_USER', 'todo_user'),
+                'PASSWORD': os.getenv('DB_PASSWORD', 'todo_pass'),
+                'HOST': os.getenv('DB_HOST', 'db'),  # Or the IP address of your MySQL server
+                'PORT': os.getenv('DB_PORT', '3306'),       # Default MySQL port
             }
 }
 
@@ -185,8 +185,8 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSlidingSerializer",
 }
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/0"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TASK_SERIALIZER = 'json'
@@ -195,7 +195,7 @@ CELERY_TIMEZONE = 'Asia/Kolkata'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": "redis://redis:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
