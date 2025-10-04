@@ -49,26 +49,19 @@ You need to have the following installed on your machine:
     cd TODOLISTAPI
     ```
 
-3.  **Install NPM packages**
+3.  **Install python packages**
 
     ```sh
-    npm install
+    pip install
     ```
 
-4.  **Create a `.env` file** in the root of the project and add your environment variables.
-
-    ```env
-    PORT=3000
-    MONGO_URI=your_mongodb_connection_string
-    ```
-
-5.  **Start the server**
+4.  **Start the server**
 
     ```sh
-    npm start
+    python manage,py runserver
     ```
 
-    The API should now be running on `http://localhost:3000`.
+    The API should now be running on `http://localhost:8000`.
 
 -----
 
