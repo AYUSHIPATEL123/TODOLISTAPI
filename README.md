@@ -17,7 +17,7 @@ A simple and efficient RESTful API for managing a to-do list. This backend servi
 
 ## 🛠️ Technologies Used
 
-  * **Backend**: Python , Django
+  * **Backend**: Python , Django , Docker , Celery , Redis
   * **Database**: MySQL
 
 
