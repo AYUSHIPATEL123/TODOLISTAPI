@@ -17,10 +17,9 @@ A simple and efficient RESTful API for managing a to-do list. This backend servi
 
 ## 🛠️ Technologies Used
 
-  * **Backend**: Node.js, Express.js
-  * **Database**: MongoDB with Mongoose (or specify your database, e.g., PostgreSQL, MySQL)
-  * **Testing**: Jest, Supertest (or specify your testing framework)
-  * **Environment Variables**: Dotenv
+  * **Backend**: Python , Django
+  * **Database**: MySQL
+
 
 -----
 
@@ -32,9 +31,9 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 You need to have the following installed on your machine:
 
-  * Node.js (v14 or higher)
-  * npm (or yarn)
-  * MongoDB (or your chosen database)
+  * Django (v5 or higher)
+  * pip 
+  * MySQL
 
 ### Installation
 
