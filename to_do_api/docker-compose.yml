@@ -25,19 +25,11 @@ services:
     ports:
       - "6379:6379"
     restart: always
-
-  celery:
-    build: .
-    container_name: todo_celery
-    restart: always
-    command: celery -A to_do_api worker --loglevel=info
-    depends_on:
-      - db
-      - redis
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0     
-
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
   web:
     build:
       context: .
@@ -52,9 +44,8 @@ services:
       db:
         condition: service_healthy
       redis:
-        condition: service_started
-      celery:
-        condition: service_started  
+        condition: service_healthy
+      
     command: >
             sh -c "
             python manage.py makemigrations &&
@@ -67,5 +58,44 @@ services:
       DB_PASSWORD: todo_pass
       DB_HOST: db
       DB_PORT: 3306
+
+  celery:
+    build: .
+    container_name: todo_celery
+    restart: always
+    command: celery -A to_do_api worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0     
+
+  celery-beat: 
+    build: .
+    container_name: todo_celery_beat
+    restart: always
+    command: ["celery", "-A", "to_do_api", "beat", "--loglevel=info", "--scheduler", "django_celery_beat.schedulers:DatabaseScheduler","--max-interval", "10"]
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started  
+    volumes:
+      - .:/app
+    environment:
+      DB_NAME: todo_db
+      DB_USER: todo_user
+      DB_PASSWORD: todo_pass
+      DB_HOST: db
+      DB_PORT: 3306 
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
 volumes:
-  todoapi_data:
+  todoapi_data:    

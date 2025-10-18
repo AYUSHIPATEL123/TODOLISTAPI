@@ -9,8 +9,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken 
 from .permissions import IsOwnerOrAdmin
+from .tasks import daily_task
+from django_celery_beat.models import PeriodicTask, CrontabSchedule
 # Create your views here.
-
+def daily_task_view():
+    schedule, _= CrontabSchedule.objects.get_or_create(minute='23',hour='56',day_of_week='*',day_of_month='*',month_of_year='*')
+    task,created=PeriodicTask.objects.get_or_create(crontab=schedule,name='daily_task',task='tasks.tasks.daily_task')
+    task.save()
+    return None
+    
 class RegisterView(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = RegisterSerializer
